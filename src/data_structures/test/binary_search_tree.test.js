@@ -108,23 +108,67 @@ dataStructures.forEach(TargetDS => {
 
     describe('delete', () => {
       it('returns the value for the removed record', () => {
+        bst.insert(1, "one");
+        bst.insert(2, "two");
 
+        expect(bst.delete(2)).toBe("two");
       });
 
       it('returns undefined if the record was not found', () => {
-
+        expect(bst.delete("three")).toBe(undefined);
       });
 
       it('reduces the count by 1', () => {
+        bst.insert("one");
+        bst.insert("two");
+        expect(bst.count()).toBe(2);
 
+        bst.delete("two");
+        expect(bst.count()).toBe(1);
       });
 
       it('omits the removed record from iteration results', () => {
+        const records = [ 
+          [1, "one"], 
+          [2, "two"], 
+          [3, "three"],
+          [4, "four"],
+          [5, "five"]
+        ];
 
+        records.forEach((item) => {
+          bst.insert(item[0], item[1]);
+        });
+
+        bst.delete(2);
+
+        let cb = jest.fn();
+        bst.forEach(cb);
+
+        expect(cb.mock.calls[0][0].value).toBe("one");
+        expect(cb.mock.calls[1][0].value).toBe("three");
+        expect(cb.mock.calls[2][0].value).toBe("four");
+        expect(cb.mock.calls[3][0].value).toBe("five");
+
+        expect(bst.count()).toBe(4);
       });
 
       it('can remove every element in a tree', () => {
+        const records = [ 3, 1, 2, 5, 4, 7];
 
+        records.forEach((item) => {
+          bst.insert(item);
+        });
+
+        records.forEach((item) => {
+          bst.delete(item);
+        });
+
+        let cb = jest.fn();
+        bst.forEach(cb);
+
+        expect(cb.mock.calls.length).toBe(0);
+        expect(bst.count()).toBe(0);
       });
 
       describe('scenarios', () => {
@@ -133,38 +177,128 @@ dataStructures.forEach(TargetDS => {
         // of how insert works to do this? How can you check your work?
 
         it('can remove the record with the smallest key', () => {
-          // TODO:
           // Insert several records
+          const numbers = [ 3, 4, 1, 2, 5 ]
+        
+          numbers.forEach((item) => {
+            bst.insert(item);
+          });
+
           // Remove the record with the smallest key
+          bst.delete(1);
+
           // Ensure that looking up that key returns undefined
+          expect(bst.lookup(1)).toBe(undefined);
+          expect(bst.lookup(2)).toBe(true);
+          expect(bst.search(2).parent.key).toBe(3);
+          expect(bst.count()).toBe(4);
         });
 
         it('can remove the record with the largest key', () => {
+          const numbers = [ 3, 4, 1, 2, 5 ]
 
+          numbers.forEach((item) => {
+            bst.insert(item);
+          });
+
+          bst.delete(5);
+
+          expect(bst.lookup(5)).toBe(undefined);
+          expect(bst.count()).toBe(4);
         });
 
         it('can remove the root', () => {
+          bst.insert(2, "two");
+          bst.insert(1, "one");
+          bst.insert(3, "three");
 
+          bst.delete(2);
+
+          expect(bst.lookup(2)).toBe(undefined);
+          expect(bst.lookup(3)).toBe("three");
+
+          let cb = jest.fn();
+          bst.forEach(cb);
+  
+          expect(cb.mock.calls.length).toBe(2);
+          expect(bst.count()).toBe(2);
         });
 
         it('can remove a node with no children', () => {
+          const numbers = [ 5, 2, 4, 8, 7 ];
 
+          numbers.forEach((num) => {
+            bst.insert(num);
+          })
+
+          bst.delete(7);
+
+          expect(bst.lookup(7)).toBe(undefined);
+          expect(bst.count()).toBe(4);
         });
 
         it('can remove a node with only a left child', () => {
+          const numbers = [ 5, 2, 4, 8, 7 ];
 
+          numbers.forEach((num) => {
+            bst.insert(num);
+          })
+
+          bst.delete(8);
+
+          expect(bst.lookup(8)).toBe(undefined);
+          expect(bst.lookup(7)).toBe(true);
+          expect(bst.search(7).parent.key).toBe(5);
+          expect(bst.count()).toBe(4);
         });
 
         it('can remove a node with only a right child', () => {
+          const numbers = [ 5, 2, 4, 8, 7 ];
 
+          numbers.forEach((num) => {
+            bst.insert(num);
+          })
+
+          bst.delete(2);
+
+          expect(bst.lookup(2)).toBe(undefined);
+          expect(bst.lookup(4)).toBe(true);
+          expect(bst.search(4).parent.key).toBe(5);
+          expect(bst.count()).toBe(4);
         });
 
         it('can remove a node with both children, where the successor is the node\'s right child', () => {
+          const numbers = [5, 3, 4, 2];
+          // 3 has two children. 4 is the right child and successor.
 
+          numbers.forEach((num) => {
+            bst.insert(num);
+          })
+
+          bst.delete(3);
+
+          expect(bst.lookup(3)).toBe(undefined);
+          expect(bst.lookup(2)).toBe(true);
+          expect(bst.lookup(4)).toBe(true);
+          expect(bst.search(2).parent.key).toBe(4);
+          expect(bst.count()).toBe(3);
         });
 
         it('can remove a node with both children, where the successor is not the node\'s right child', () => {
+          const numbers = [ 8, 5, 2, 7, 6 ]; 
+          // 5 has two children. Right child is 7 and successor is 6.
 
+          numbers.forEach((num) => {
+            bst.insert(num);
+          })
+
+          bst.delete(5);
+
+          expect(bst.lookup(5)).toBe(undefined);
+          expect(bst.lookup(7)).toBe(true);
+          expect(bst.lookup(6)).toBe(true);
+          expect(bst.search(7).parent.key).toBe(6);
+          expect(bst.count()).toBe(4);
         });
       });
     });
