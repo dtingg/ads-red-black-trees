@@ -23,6 +23,8 @@ export class RBTNode {
 class RedBlackTree {
   constructor(Node = RBTNode) {
     this.Node = Node;
+    this._count = 0;
+    this._root = undefined;
   }
 
   lookup(key) {
@@ -118,7 +120,7 @@ class RedBlackTree {
   }
 
   count() {
-
+    return this._count;
   }
 
   forEach(callback) {
