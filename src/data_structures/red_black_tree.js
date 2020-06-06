@@ -27,8 +27,30 @@ class RedBlackTree {
     this._root = undefined;
   }
 
-  lookup(key) {
+  search(key) {
+    let node = this._root;
 
+    while (node) {
+      if (key < node.key) {
+        node = node.left;
+      } else if (key > node.key) {
+        node = node.right;
+      } else if (key == node.key) {
+        return node;
+      } else {
+        return undefined;
+      }
+    }
+  }
+
+  lookup(key) {
+    let node = this.search(key)
+
+    if (node) {
+      return node.value
+    } else {
+      return node;
+    }
   }
 
   /**
@@ -104,7 +126,40 @@ class RedBlackTree {
     node.parent = child;
   }
 
-  _insertInternal(key, value) {
+  _insertInternal(key, value=true) {
+    let current_node = this._root;
+
+    if (current_node === undefined) {
+      const new_node = new this.Node({ key: key, value: value, color: RBTNode.BLACK });
+      this._count += 1;
+      this._root = new_node;
+      return new_node;
+    }
+    
+    while (current_node) {
+      if (key < current_node.key) {
+        if (current_node.left) {
+          current_node = current_node.left;
+        } else {
+          const new_node = new this.Node({ key: key, value: value, parent: current_node });
+          current_node.left = new_node;
+          this._count += 1;
+          return new_node;
+        }
+      } else if (key > current_node.key) {
+        if (current_node.right) {
+          current_node = current_node.right;
+        } else {
+          const new_node = new this.Node({ key: key, value: value, parent: current_node });
+          current_node.right = new_node;
+          this._count += 1;
+          return new_node;
+        }
+      } else {
+        current_node.value = value;
+        return current_node;
+      }
+    }
   }
 
   _insertRebalance(node) {
