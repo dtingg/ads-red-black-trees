@@ -238,10 +238,21 @@ class RedBlackTree {
 
   forEach(callback) {
     const visitSubtree = (node, callback, i = 0) => {
-      if (node !== RBTNode.sentinel) {
-        i = visitSubtree(node.left, callback, i);
+      if (node !== undefined) {
+        let left = undefined;
+        let right = undefined;
+
+        if (node.left  && node.left !== RBTNode.sentinel) {
+          left = node.left;
+        }
+
+        if (node.right  && node.right !== RBTNode.sentinel) {
+          right = node.right;
+        }
+
+        i = visitSubtree(left, callback, i);
         callback({ key: node.key, value: node.value }, i, this);
-        i = visitSubtree(node.right, callback, i + 1);
+        i = visitSubtree(right, callback, i + 1);
       }
       return i;
     }
