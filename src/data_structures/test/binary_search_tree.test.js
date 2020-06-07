@@ -106,7 +106,7 @@ dataStructures.forEach(TargetDS => {
       });
     });
 
-    describe('delete', () => {
+    xdescribe('delete', () => {
       it('returns the value for the removed record', () => {
         bst.insert(1, "one");
         bst.insert(2, "two");
@@ -303,7 +303,7 @@ dataStructures.forEach(TargetDS => {
       });
     });
 
-    describe('forEach', () => {
+    xdescribe('forEach', () => {
       let records;
       beforeEach(() => {
         records = [
