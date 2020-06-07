@@ -126,7 +126,7 @@ class RedBlackTree {
     node.parent = child;
   }
 
-  _insertInternal(key, value=true) {
+  _insertInternal(key, value) {
     let current_node = this._root;
 
     if (current_node === undefined) {
@@ -138,7 +138,7 @@ class RedBlackTree {
     
     while (current_node) {
       if (key < current_node.key) {
-        if (current_node.left) {
+        if (current_node.left !== RBTNode.sentinel) {
           current_node = current_node.left;
         } else {
           const new_node = new this.Node({ key: key, value: value, parent: current_node });
@@ -147,7 +147,7 @@ class RedBlackTree {
           return new_node;
         }
       } else if (key > current_node.key) {
-        if (current_node.right) {
+        if (current_node.right !== RBTNode.sentinel) {
           current_node = current_node.right;
         } else {
           const new_node = new this.Node({ key: key, value: value, parent: current_node });
@@ -163,9 +163,67 @@ class RedBlackTree {
   }
 
   _insertRebalance(node) {
-  }
+    while (node.color == RBTNode.RED && node.parent.color == RBTNode.RED) {
+    // fix the problem for node and parent
+    // possibly create a rule 4 violation above us
+    // set node to the the bottom of those two nodes
+    // then continue
 
-  insert(key, value) {
+      let parent = node.parent
+      let grandparent = parent.parent
+
+      // Check if parent is the left or right child of gp
+      if (parent === grandparent.left) {
+        let uncle = grandparent.right;
+      
+        if (uncle.color == RBTNode.RED) {
+          // swap colors between generations
+          uncle.color = RBTNode.BLACK;
+          parent.color = RBTNode.BLACK;
+          grandparent.color = RBTNode.RED;
+          node = grandparent;
+          // continue, possibly done, will be done at root
+        } else { // uncle is black
+          if (node === parent.right) {
+            // force node to be left child
+            parent = node;
+            node = node.parent;
+            this._rotateLeft(node);
+          } else { // node is left child of parent
+            parent.color = RBTNode.BLACK;
+            grandparent.color = RBTNode.RED;
+            this._rotateRight(grandparent);
+          }
+        }  
+      } else {
+        let uncle = grandparent.left;
+    
+        if (uncle.color == RBTNode.RED) {
+          // swap colors between generations
+          uncle.color = RBTNode.BLACK;
+          parent.color = RBTNode.BLACK;
+          grandparent.color = RBTNode.RED;
+          node = grandparent;
+          // continue, possibly done, will be done at root
+        } else { // uncle is black
+          if (node === parent.left) {
+          // force node to be right child
+            parent = node;
+            node = node.parent;
+            this._rotateRight(node);
+          } else { // node is right child of parent
+            parent.color = RBTNode.BLACK;
+            grandparent.color = RBTNode.RED;
+            this._rotateLeft(grandparent);
+          }
+        }     
+      } 
+    }
+    //   set the root's color to black
+    this._root.color = RBTNode.BLACK;
+  }
+    
+  insert(key, value = true) {
     const node = this._insertInternal(key, value);
     this._insertRebalance(node);
   }
@@ -179,9 +237,16 @@ class RedBlackTree {
   }
 
   forEach(callback) {
-    
+    const visitSubtree = (node, callback, i = 0) => {
+      if (node) {
+        i = visitSubtree(node.left, callback, i);
+        callback({ key: node.key, value: node.value }, i, this);
+        i = visitSubtree(node.right, callback, i + 1);
+      }
+      return i;
+    }
+    visitSubtree(this._root, callback)
   }
 }
-
 
 export default RedBlackTree;
