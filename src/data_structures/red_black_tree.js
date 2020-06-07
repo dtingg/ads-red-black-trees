@@ -238,7 +238,7 @@ class RedBlackTree {
 
   forEach(callback) {
     const visitSubtree = (node, callback, i = 0) => {
-      if (node) {
+      if (node !== RBTNode.sentinel) {
         i = visitSubtree(node.left, callback, i);
         callback({ key: node.key, value: node.value }, i, this);
         i = visitSubtree(node.right, callback, i + 1);
