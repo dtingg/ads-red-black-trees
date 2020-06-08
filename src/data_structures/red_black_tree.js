@@ -228,8 +228,95 @@ class RedBlackTree {
     this._insertRebalance(node);
   }
 
-  delete(key) {
+  find_successor(current_node) {
+    if (!current_node.right) {
+      return current_node
+    }
 
+    current_node = current_node.right
+
+    while (current_node.left) {
+      current_node = current_node.left;
+    }
+
+    return current_node;
+  }
+
+  delete(key) {
+    let target_node = this.search(key);
+
+    if (!target_node) {
+      return target_node;
+    }
+
+    let deleted_value = target_node.value;
+
+    const parent = target_node.parent;
+    let child;
+
+    if (parent) {
+      if (parent.left && parent.left === target_node) {
+        child = "left";
+      } else {
+        child = "right";
+      }
+    }
+
+    // If the deleted node has no children
+    if (!target_node.left && !target_node.right) {
+      if (!parent) {
+        this._root = undefined; 
+      } else if (child == "left") {
+        parent.left = null;
+      } else {
+        parent.right = null;
+      }
+    // If the deleted node has two children 
+    } else if (target_node.left && target_node.right) {
+      const successor = this.find_successor(target_node)
+      this.delete(successor.key);
+      this._count += 1;
+
+      if (!parent) {
+        target_node.key = successor.key;
+        target_node.value = successor.value;
+        this._root = target_node;
+        target_node.parent = null;
+      } else {
+        if (child == "left") {
+          parent.left.key = successor.key;
+          parent.left.value = successor.value;
+        } else {
+          parent.right.key = successor.key;
+          parent.right.value = successor.value;
+        }
+      }
+    // If the deleted node only has one child
+    } else {
+      let temp;
+
+      if (target_node.left) {
+        temp = target_node.left;
+      } else {
+        temp = target_node.right;
+      }
+
+      if (!parent) {
+        this._root = temp;
+        temp.parent = null;
+      } else {
+        if (child == "left") {
+          parent.left = temp;
+          temp.parent = parent;
+        } else {
+          parent.right = temp;
+          temp.parent = parent;
+        } 
+      }
+    }
+
+    this._count -= 1;
+    return deleted_value; 
   }
 
   count() {
