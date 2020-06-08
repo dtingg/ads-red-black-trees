@@ -136,7 +136,7 @@ class RedBlackTree {
       return new_node;
     }
     
-    while (current_node) {
+    while (current_node !== RBTNode.sentinel) {
       if (key < current_node.key) {
         if (current_node.left !== RBTNode.sentinel) {
           current_node = current_node.left;
@@ -229,13 +229,13 @@ class RedBlackTree {
   }
 
   find_successor(current_node) {
-    if (!current_node.right) {
+    if (current_node.right === RBTNode.sentinel) {
       return current_node
     }
 
     current_node = current_node.right
 
-    while (current_node.left) {
+    while (current_node.left !== RBTNode.sentinel) {
       current_node = current_node.left;
     }
 
