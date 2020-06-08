@@ -254,7 +254,7 @@ class RedBlackTree {
     const parent = target_node.parent;
     let child;
 
-    if (parent) {
+    if (parent !== RBTNode.sentinel) {
       if (parent.left && parent.left === target_node) {
         child = "left";
       } else {
@@ -263,7 +263,9 @@ class RedBlackTree {
     }
 
     // If the deleted node has no children
-    if (!target_node.left && !target_node.right) {
+    if (target_node.left === RBTNode.sentinel && target_node.right === RBTNode.sentinel) {
+      console.log('no children');
+
       if (!parent) {
         this._root = undefined; 
       } else if (child == "left") {
@@ -272,12 +274,14 @@ class RedBlackTree {
         parent.right = null;
       }
     // If the deleted node has two children 
-    } else if (target_node.left && target_node.right) {
+    } else if (target_node.left !== RBTNode.sentinel && target_node.right !== RBTNode.sentinel) {
+      console.log("two children");
+      console.log(target_node.left)
       const successor = this.find_successor(target_node)
       this.delete(successor.key);
       this._count += 1;
 
-      if (!parent) {
+      if (parent === RBTNode.sentinel) {
         target_node.key = successor.key;
         target_node.value = successor.value;
         this._root = target_node;
@@ -293,6 +297,7 @@ class RedBlackTree {
       }
     // If the deleted node only has one child
     } else {
+      console.log("one childe");
       let temp;
 
       if (target_node.left) {
