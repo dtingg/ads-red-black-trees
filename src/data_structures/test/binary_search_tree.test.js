@@ -106,7 +106,7 @@ dataStructures.forEach(TargetDS => {
       });
     });
 
-    xdescribe('delete', () => {
+    describe('delete', () => {
       it('returns the value for the removed record', () => {
         bst.insert(1, "one");
         bst.insert(2, "two");
