@@ -219,7 +219,7 @@ class RedBlackTree {
         }     
       } 
     }
-    //   set the root's color to black
+    // set the root's color to black
     this._root.color = RBTNode.BLACK;
   }
     
@@ -245,7 +245,7 @@ class RedBlackTree {
   delete(key) {
     let target_node = this.search(key);
 
-    if (!target_node) {
+    if (target_node === undefined) {
       return target_node;
     }
 
@@ -255,7 +255,7 @@ class RedBlackTree {
     let child;
 
     if (parent !== RBTNode.sentinel) {
-      if (parent.left && parent.left === target_node) {
+      if (parent.left !== RBTNode.sentinel && parent.left === target_node) {
         child = "left";
       } else {
         child = "right";
@@ -264,19 +264,15 @@ class RedBlackTree {
 
     // If the deleted node has no children
     if (target_node.left === RBTNode.sentinel && target_node.right === RBTNode.sentinel) {
-      console.log('no children');
-
-      if (!parent) {
+      if (parent === RBTNode.sentinel) {
         this._root = undefined; 
       } else if (child == "left") {
-        parent.left = null;
+        parent.left = RBTNode.sentinel;
       } else {
-        parent.right = null;
+        parent.right = RBTNode.sentinel;
       }
     // If the deleted node has two children 
     } else if (target_node.left !== RBTNode.sentinel && target_node.right !== RBTNode.sentinel) {
-      console.log("two children");
-      console.log(target_node.left)
       const successor = this.find_successor(target_node)
       this.delete(successor.key);
       this._count += 1;
@@ -285,7 +281,7 @@ class RedBlackTree {
         target_node.key = successor.key;
         target_node.value = successor.value;
         this._root = target_node;
-        target_node.parent = null;
+        target_node.parent = RBTNode.sentinel;
       } else {
         if (child == "left") {
           parent.left.key = successor.key;
@@ -297,18 +293,17 @@ class RedBlackTree {
       }
     // If the deleted node only has one child
     } else {
-      console.log("one childe");
       let temp;
 
-      if (target_node.left) {
+      if (target_node.left !== RBTNode.sentinel) {
         temp = target_node.left;
       } else {
         temp = target_node.right;
       }
 
-      if (!parent) {
+      if (parent === RBTNode.sentinel) {
         this._root = temp;
-        temp.parent = null;
+        temp.parent = RBTNode.sentinel;
       } else {
         if (child == "left") {
           parent.left = temp;
