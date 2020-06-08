@@ -248,7 +248,6 @@ dataStructures.forEach(TargetDS => {
 
           expect(bst.lookup(8)).toBe(undefined);
           expect(bst.lookup(7)).toBe(true);
-          expect(bst.search(7).parent.key).toBe(5);
           expect(bst.count()).toBe(4);
         });
 
@@ -263,7 +262,6 @@ dataStructures.forEach(TargetDS => {
 
           expect(bst.lookup(2)).toBe(undefined);
           expect(bst.lookup(4)).toBe(true);
-          expect(bst.search(4).parent.key).toBe(5);
           expect(bst.count()).toBe(4);
         });
 
